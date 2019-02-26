@@ -3,20 +3,16 @@ const mail    = require('./lib/mail');
 const axios = require("axios");
 const https = require('https');
 const loki = require('lokijs');
+const config = require('./config');
 
 var app = {};
-
-app.baseUrl = 'https://www.xe.gr/property/search?System.item_type=re_residence&Transaction.type_channel=117541&Geo.area_id_new__hierarchy=83323,83322,83330,83332&Transaction.price.to=800&Item.area.from=70&sort_by=Publication.effective_date_start&sort_direction=desc';
-
 
 app.init = async function() {
 	//mail.init();
 	
 	console.log('Execution started')
 	
-	const minutesInterval = 5; 
-	
-	setInterval(app.execute, 1000 * 60 * minutesInterval);
+	setInterval(app.execute, 1000 * 60 * config.app.minutesInterval);
 };
 
 async function initialize(db, options) {
@@ -76,7 +72,7 @@ app.getProperties = async function() {
 		});
 
 		for (k=0; k < pagesToCheck; k++) {
-			var url = `${app.baseUrl}&page=${k+1}`;
+			var url = `${config.app.searchUrl}&page=${k+1}`;
 			const response = await axios.get(url , { httpsAgent: agent });
 			const data = response.data;
 			
