@@ -1,0 +1,13 @@
+{
+  "name": "home-finder",
+  "version": "1.0.0",
+  "description": "Find ads for specific search url",
+  "main": "index.js",
+  "author": "Manos Kouvarakis",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cheerio": "latest",
+    "lokijs": "^1.5.6",
+    "nodemailer": "latest"
+  }
+}
