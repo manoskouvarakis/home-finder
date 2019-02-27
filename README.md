@@ -1,7 +1,6 @@
 # home-finder
 
-This is a project in Node.js
-Given a specific search url, it finds newly published ads.
+Given a specific search url, find newly published ads.
  
 ## Getting Started
 
@@ -10,16 +9,32 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 In order to run the application locally, you will only need [Node.js](https://nodejs.org/en/) installed on your computer. 
-To set the search url, you need to navigate to /home-finder/app/index.js and change "baseUrl" property with the one you want.
+
+### Configuration
+
+In configuration file (config.js) you can set:
+- The search url
+- The interval (in minutes) of each search
 
 ### Installation
 
 In order to run the project:
+
+```
 - Clone the repository in your pc
 - Navigate to /home-finder
 - Run "npm install"
+```
 
 ### Execution
 
+```
 - Navigate to /home-finder/app
 - Run "node index.js" 
+```
+
+### Built With
+
+* [NodeJS](https://nodejs.org)
+* [LokiJS](http://lokijs.org/) - In-memory NoSQL database
+* [Axios](https://github.com/axios/axios) - Promise based HTTP client for the browser and node.js
