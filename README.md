@@ -15,6 +15,8 @@ In order to run the application locally, you will only need [Node.js](https://no
 In configuration file (config.js) you can set:
 - The search url
 - The interval (in minutes) of each search
+- Enable/Disable Mail
+- If mail is enabled, you should set user, pass and recipients addresses
 
 ### Installation
 

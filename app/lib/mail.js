@@ -1,4 +1,5 @@
-var nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
+const config = require('../config');
 
 var mail = {};
 
@@ -8,8 +9,8 @@ mail.init = function() {
 	_transporter = nodemailer.createTransport({
 		service: 'gmail',
 		auth: {
-			user: '###',
-			pass: '###'
+			user: config.mail.user,
+			pass: config.mail.pass
 		}
 	});
 };

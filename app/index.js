@@ -1,15 +1,17 @@
 const cheerio = require('cheerio');
-const mail    = require('./lib/mail');
 const axios = require("axios");
 const https = require('https');
 const loki = require('lokijs');
 const config = require('./config');
+const mail    = require('./lib/mail');
 
 var app = {};
 
 app.init = async function() {
-	//mail.init();
-	
+	if (config.mail.enable) {
+		mail.init();
+	}
+
 	console.log('Execution started')
 	
 	setInterval(app.execute, 1000 * 60 * config.app.minutesInterval);
@@ -21,10 +23,10 @@ async function initialize(db, options) {
 
 
 app.execute = async function() {
-	var now = new Date(Date.now());
+	let now = new Date(Date.now());
 	console.log('Fetching ' + now.toString());
 	
-	var found = 0;
+	let found = 0;
 	
 	const db = new loki('properties.db', {
 		autosave: true, 
@@ -32,16 +34,16 @@ app.execute = async function() {
 	});
 	
 	await initialize(db);	
-	var propertiesCollection = db.getCollection("properties");
+	let propertiesCollection = db.getCollection("properties");
 	if (propertiesCollection === null) {
 		propertiesCollection = db.addCollection("properties");
 	}		
 
-	var propertyObjects = await app.getProperties();
+	let propertyObjects = await app.getProperties();
 	//console.log(propertyObjects);
 	
 	propertyObjects.forEach(function(elem) {
-		var propertyId = elem.id;		
+		let propertyId = elem.id;		
 		
 		let existingProperty = propertiesCollection.findOne({'id': propertyId});
 		if (existingProperty == null) {
@@ -49,8 +51,10 @@ app.execute = async function() {
 			console.log(elem.href);
 			propertiesCollection.insert( { id : propertyId, lastChecked: elem.lastChecked, link: elem.href } );
 			
-			//console.log('Sending mail');
-			//mail.send(['manoskouvarakis@gmail.com'], 'A new property found', `<h1>New Property with <a href="${app.baseUrl}">this</a> search</h1><br/><a href="${elem.href}">${elem.id}</a>`);
+			if (config.mail.enable) {
+				console.log('Sending mail');
+				mail.send(config.mail.recepients, 'A new property found', `<h1>New Property with <a href="${app.baseUrl}">this</a> search</h1><br/><a href="${elem.href}">${elem.id}</a>`);
+			}
 		}
 		else {
 			existingProperty.lastChecked = Date.now();
@@ -72,14 +76,14 @@ app.getProperties = async function() {
 		});
 
 		for (k=0; k < pagesToCheck; k++) {
-			var url = `${config.app.searchUrl}&page=${k+1}`;
+			let url = `${config.app.searchUrl}&page=${k+1}`;
 			const response = await axios.get(url , { httpsAgent: agent });
 			const data = response.data;
 			
 			returnedPages++;
-			var $ = cheerio.load(data);
+			let $ = cheerio.load(data);
 			
-			var properties = $('.column_search_results .column_468 .lazy');
+			let properties = $('.column_search_results .column_468 .lazy');
 			for(i = 0; i < properties.length; i++) {
 				propertyObjects.push({
 					id: properties[i].attribs['data-id'],
@@ -97,6 +101,8 @@ app.getProperties = async function() {
 	}
 };
 
-app.init().catch();
+app.init().catch(err => {
+    console.error(err.message); 
+});
 
 module.exports = app;
